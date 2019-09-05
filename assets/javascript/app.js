@@ -2,8 +2,6 @@
 
 var games = ["mario", "sonic", "crash bandicoot", "zelda"];
 
-//Display Gifs
-
 //Creates Buttons
 
 function buttons() {
@@ -14,8 +12,8 @@ function buttons() {
         a.addClass("game");
         a.attr("data-name", games[i]);
         a.text(games[i]);
-        $("#buttons-view").append(a);
-           
+        $("#buttons-view").append(a); 
+
     }
 }
 
@@ -23,17 +21,14 @@ $("#add-button").on("click", function(event) {
     event.preventDefault();
     var game = $("#topic-input").val().trim();
     games.push(game);
-    buttons();
-    
-    })
+    buttons();   
+})
 
-    buttons();
+buttons();
 
+//AJAX Call
 
-
-//AJAX
-
-    $("button").on("click", function() {
+    $("#buttons-view").on("click", 'button', function() {
             var game = $(this).attr("data-name");
             var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + game + "&api_key=tKFVhdYEzflz9DrDqkpfkwunuZ3QYvVh&limit=10"
 
@@ -56,15 +51,37 @@ $("#add-button").on("click", function(event) {
 
             var image = $("<img>");
 
-            image.attr("src", results[i].images.fixed_height.url);
+            image.attr("src", results[i].images.original_still.url);
+            image.attr("data-still", results[i].images.original_still.url);
+            image.attr("data-animate", results[i].images.original.url);
+            image.attr("data-state", "still");
+            image.addClass("gif")
 
             gifDiv.append(p);
             gifDiv.append(image);
-
+            gifDiv.addClass("col-4-md");
             $("#gifs-view").prepend(gifDiv);
-
+            
         }
+
+        // Click to Stop/Start
+
+        $(".gif").on("click", function() {
+            var state = $(this).attr("data-state");
+            console.log(state)
+        
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate")
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still")
+            }
+        })
+       
 
      })
 
 })
+
+
